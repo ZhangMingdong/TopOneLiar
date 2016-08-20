@@ -1,0 +1,224 @@
+
+
+
+my-topic-tree .overlay, my-tree{
+    background-color: darkslategray;
+    background-color:#EEE;
+}
+/* basic tree style */
+my-tree {
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: 0;
+    overflow: hidden;
+    font-size: 10px;
+}
+
+/* basic tree node style*/
+my-tree circle {
+    //fill: yellow;
+//    stroke: steelblue;
+    opacity: 1;
+    cursor: pointer;
+    stroke-width: 2px;
+}
+/* basic tree node hover style*/
+my-tree circle:hover {
+    stroke: darkorange;
+}
+/* basic tree node focused style*/
+my-tree circle.focused {
+//     stroke: orange;
+ }
+
+my-tree circle.temp {
+    fill: lightgray;
+}
+
+my-tree circle.dist1 {
+    stroke: purple;
+}
+my-tree circle.dist2 {
+    stroke: pink;
+}
+
+
+/* axis style*/
+my-tree .x-axis line, scatter .y-axis line {
+    stroke: rgba(255, 255, 255, 0.2);
+}
+/* basic reference style*/
+my-tree .reference {
+    fill: none;
+    stroke: gray;
+    stroke-width: 1.5;
+}
+my-tree .reference.focused {
+    stroke: #aaaaaa;
+}
+my-tree .reference.referred {
+    stroke: #aaaaaa;
+}
+my-tree .reference.citing {
+    stroke: lightblue;
+}
+
+
+my-tree .reference:hover{
+}
+my-tree .reference:hover {
+    stroke-width:3.5;
+    stroke:orange;
+}
+my-tree .reference.selected {
+    stroke-width:4.5;
+    stroke-dasharray: 10 5 10 5;
+}
+my-tree .reference.citing.focused {
+    stroke: lightgreen;
+}
+
+my-tree .reference.cited.focused {
+    stroke: pink;
+}
+
+/* used for axis*/
+my-tree text {
+    fill: black;
+    stroke: none;
+}
+
+/* =======================================reference type
+
+/* for different type*/
+my-tree .reference.contrast{
+    stroke:#800000;
+}
+my-tree .reference.rely{
+    stroke:#008000;
+}
+my-tree .reference.context{
+    stroke:#000080
+}
+
+my-tree .reference.contrast.rely{
+    stroke:#808000
+}
+my-tree .reference.contrast.context{
+    stroke:#800080
+}
+my-tree .reference.rely.context{
+    stroke:#008080
+}
+my-tree .reference.contrast.rely.context{
+    stroke:#808080
+}
+
+/*hover*/
+my-tree .reference.contrast:hover{
+    stroke:#ff0000;
+}
+my-tree .reference.rely:hover{
+    stroke:#00ff00;
+}
+my-tree .reference.context:hover{
+    stroke:#0000ff
+}
+
+my-tree .reference.contrast.rely:hover{
+    stroke:#ffff00
+}
+my-tree .reference.contrast.context:hover{
+    stroke:#ff00ff
+}
+my-tree .reference.rely.context:hover{
+    stroke:#00ffff
+}
+my-tree .reference.contrast.rely.context:hover{
+    stroke:#ffffff
+}
+
+/*selected*/
+my-tree .reference.contrast.selected{
+    stroke:#ff0000;
+}
+my-tree .reference.rely.selected{
+    stroke:#00ff00;
+}
+my-tree .reference.context.selected{
+    stroke:#0000ff
+}
+my-tree .reference.contrast.rely.selected{
+    stroke:#ffff00
+}
+my-tree .reference.contrast.context.selected{
+    stroke:#ff00ff
+}
+my-tree .reference.rely.context.selected{
+    stroke:#00ffff
+}
+my-tree .reference.contrast.rely.context.selected{
+    stroke:#ffffff
+}
+/*Focused*/
+my-tree .reference.contrast.focused{
+    stroke:#ff0000;
+}
+my-tree .reference.rely.focused{
+    stroke:#00ff00;
+}
+my-tree .reference.context.focused{
+    stroke:#0000ff
+}
+my-tree .reference.contrast.rely.focused{
+    stroke:#ffff00
+}
+my-tree .reference.contrast.context.focused{
+    stroke:#ff00ff
+}
+my-tree .reference.rely.context.focused{
+    stroke:#00ffff
+}
+my-tree .reference.contrast.rely.context.focused{
+    stroke:#ffffff
+}
+
+/*Referred*/
+my-tree .reference.contrast.referred{
+    stroke:#ff0000;
+}
+my-tree .reference.rely.referred{
+    stroke:#00ff00;
+}
+my-tree .reference.context.referred{
+    stroke:#0000ff
+}
+my-tree .reference.contrast.rely.referred{
+    stroke:#ffff00
+}
+my-tree .reference.contrast.context.referred{
+    stroke:#ff00ff
+}
+my-tree .reference.rely.context.referred{
+    stroke:#00ffff
+}
+my-tree .reference.contrast.rely.context.referred{
+    stroke:#ffffff
+}
+/* mouse operated at last*/
+
+
+
+
+
+
+my-force {
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: 0;
+    overflow: hidden;
+    font-size: 10px;
+    background-color: honeydew;
+}

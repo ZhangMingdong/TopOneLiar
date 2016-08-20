@@ -1,0 +1,95 @@
+@charset "UTF-8";
+/**
+* Styles for pure html layout
+*/
+
+/*
+For header container
+*/
+.header-container,.footer-container{
+
+}
+.header-container,.footer-container {
+    float:left;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background: #000;
+    border-bottom: 2px solid #999;
+    display: block;
+    height: 30px;
+    width:100%;
+    color: #666;
+}
+/*
+For footer container
+*/
+.footer-container {
+    text-align: center;
+}
+.ui-container{
+    display: block;
+    z-index: 0;
+    overflow: hidden;
+    font-size: 10px;
+    background-color: #00d4b4;
+    width:100%;
+    position: absolute;
+    top: 30px;
+    bottom: 0px;
+    left: 0px;
+}
+
+/*
+for the section part
+*/
+.ui-column {
+    display: table-cell;
+    vertical-align: top;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+/*
+for the section part
+*/
+.ui-column-1,.ui-column-2,.ui-column-3 {
+
+    display: block;
+    z-index: 0;
+    overflow: hidden;
+    font-size: 10px;
+
+    height: 100%;
+    float: left;
+
+    width: 30%;
+}
+
+.ui-column-1 {
+    width: 30%;
+}
+.ui-column-2 {
+    width: 50%;
+}
+.ui-column-3 {
+    width: 20%;
+}
+
+my-topic-tree{
+    width:100%;
+    height:100%;
+    float: left;
+}
+my-tree{
+    width:100%;
+    height:100%;
+    float: left;
+}
+/* The main Style*/
+.survey-vis{
+    background-color: #dedef8;
+    box-shadow:inset 1px -1px 1px #444, inset -1px 1px 1px #444;
+}
+

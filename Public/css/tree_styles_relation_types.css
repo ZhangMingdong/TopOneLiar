@@ -1,0 +1,123 @@
+
+/* for different type*/
+my-tree .reference.contrast{
+    stroke:#800000;
+}
+my-tree .reference.rely{
+    stroke:#008000;
+}
+my-tree .reference.context{
+    stroke:#000080
+}
+
+my-tree .reference.contrast.rely{
+    stroke:#808000
+}
+my-tree .reference.contrast.context{
+    stroke:#800080
+}
+my-tree .reference.rely.context{
+    stroke:#008080
+}
+my-tree .reference.contrast.rely.context{
+    stroke:#808080
+}
+
+/*hover*/
+my-tree .reference.contrast:hover{
+    stroke:#ff0000;
+}
+my-tree .reference.rely:hover{
+    stroke:#00ff00;
+}
+my-tree .reference.context:hover{
+    stroke:#0000ff
+}
+
+my-tree .reference.contrast.rely:hover{
+    stroke:#ffff00
+}
+my-tree .reference.contrast.context:hover{
+    stroke:#ff00ff
+}
+my-tree .reference.rely.context:hover{
+    stroke:#00ffff
+}
+my-tree .reference.contrast.rely.context:hover{
+    stroke:#ffffff
+}
+
+/*selected*/
+my-tree .reference.contrast.selected{
+    stroke:#ff0000;
+}
+my-tree .reference.rely.selected{
+    stroke:#00ff00;
+}
+my-tree .reference.context.selected{
+    stroke:#0000ff
+}
+my-tree .reference.contrast.rely.selected{
+    stroke:#ffff00
+}
+my-tree .reference.contrast.context.selected{
+    stroke:#ff00ff
+}
+my-tree .reference.rely.context.selected{
+    stroke:#00ffff
+}
+my-tree .reference.contrast.rely.context.selected{
+    stroke:#ffffff
+}
+/*Focused*/
+my-tree .reference.contrast.focused{
+    stroke:#ff0000;
+}
+my-tree .reference.rely.focused{
+    stroke:#00ff00;
+}
+my-tree .reference.context.focused{
+    stroke:#0000ff
+}
+my-tree .reference.contrast.rely.focused{
+    stroke:#ffff00
+}
+my-tree .reference.contrast.context.focused{
+    stroke:#ff00ff
+}
+my-tree .reference.rely.context.focused{
+    stroke:#00ffff
+}
+my-tree .reference.contrast.rely.context.focused{
+    stroke:#ffffff
+}
+
+/*Referred*/
+my-tree .reference.contrast.referred{
+    stroke:#ff0000;
+}
+my-tree .reference.rely.referred{
+    stroke:#00ff00;
+}
+my-tree .reference.context.referred{
+    stroke:#0000ff
+}
+my-tree .reference.contrast.rely.referred{
+    stroke:#ffff00
+}
+my-tree .reference.contrast.context.referred{
+    stroke:#ff00ff
+}
+my-tree .reference.rely.context.referred{
+    stroke:#00ffff
+}
+my-tree .reference.contrast.rely.context.referred{
+    stroke:#ffffff
+}
+/* mouse operated at last*/
+
+
+
+
+
+

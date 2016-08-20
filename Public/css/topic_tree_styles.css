@@ -1,0 +1,41 @@
+my-topic-tree{
+    width:100%;
+    height:100%;
+    display:block;
+}
+
+my-topic-tree .node {
+    cursor: pointer;
+}
+
+
+my-topic-tree .node circle {
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
+
+my-topic-tree .node text {
+    font-size:10px;
+    font-family:sans-serif;
+}
+
+my-topic-tree .link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 1.5px;
+}
+
+my-topic-tree .templink {
+    fill: none;
+    stroke: red;
+    stroke-width: 3px;
+}
+
+my-topic-tree .ghostCircle.show{
+    display:block;
+}
+
+my-topic-tree .ghostCircle, .activeDrag .ghostCircle{
+    display: none;
+}
