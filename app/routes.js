@@ -44,7 +44,7 @@ module.exports = function(app) {
 		});
 	});
 
-
+	// get the death information
 	app.get('/api/death', function(req, res) {
 		GameRecord.find(function(err, records) {
 			if (err)
@@ -313,8 +313,8 @@ module.exports = function(app) {
 		});
 	});
 
-
-	app.post('/api/death', function(req, res) {
+	// get the death information of a selected season
+	app.post('/api/death_old', function(req, res) {
 		var season=req.body.season;
 	//	console.log(season);
 		GameRecord.find({season:season},function(err, records) {
@@ -479,6 +479,160 @@ module.exports = function(app) {
 		});
 	});
 
+	// try to rewrite the deat api
+	app.post('/api/death', function(req, res) {
+		var season=req.body.season;
+		//	console.log(season);
+		GameRecord.find({season:season},function(err, records) {
+			if (err)
+				console.log(err);
+			else {
+				// all the record of the player
+				var all={}
+				var listAll=[]
+				var listKill=[];
+				var listExile=[];
+				var listSkill=[];
+				var listSurvive=[];
+				var listWin=[];
+				var listWolves=[];
+				var listLucky=[];
+
+
+				records.forEach(function(d){
+					// all: check if this player exist
+					if(all[d.name]) all[d.name].count++;
+					else all[d.name]={
+						name: d.name
+						,count:1
+						,kill:0
+						,exile:0
+						,skill:0
+						,survive:0
+						,win:0
+						,wolves:0
+						,lucky:0
+					}
+
+					// win
+					if(d.win&& d.win==1) all[d.name].win++;
+					// kill
+					var killed=0
+					var dyings= d.dying.split(";");
+					dyings.forEach(function(dying){
+						if(dying=="K"){
+							all[d.name].kill++;
+							killed=1;
+						}
+					})
+					// other death
+					if(killed==0){
+						if(d.dying=="E"){
+							all[d.name].exile++;
+						}
+						else if(d.dying){
+							all[d.name].skill++;
+						}
+						else{
+							all[d.name].survive++;
+						}
+					}
+					// wolves
+					if(d.role=="W"|| d.role=="WW")
+						all[d.name].wolves++;
+
+					if(d.lucky){
+						var luckyNum= d.lucky.split(";").length;
+						all[d.name].lucky+=luckyNum;
+					}
+					// lucky
+				});
+				// write the information to array;
+				var threshold=4;
+				for(var player in all){
+					// the list of all ignore the threshold
+					listAll.push(all[player]);
+					if(all[player].count>threshold){
+						if(all[player].kill>1)
+							listKill.push({name:player,count:all[player].kill,all:all[player].count});
+						if(all[player].exile>1)
+							listExile.push({name:player,count:all[player].exile,all:all[player].count});
+						if(all[player].skill>1)
+							listSkill.push({name:player,count:all[player].skill,all:all[player].count});
+						if(all[player].survive>1)
+							listSurvive.push({name:player,count:all[player].survive,all:all[player].count});
+						if(all[player].win>1)
+							listWin.push({name:player,count:all[player].win,all:all[player].count});
+						if(all[player].wolves>1)
+							listWolves.push({name:player,count:all[player].wolves,all:all[player].count});
+						if(all[player].lucky>1)
+							listLucky.push({name:player,count:all[player].lucky,all:all[player].count});
+					}
+				}
+
+				listKill.sort(function(a,b){
+					var scaleA= a.count/ a.all;
+					var scaleB= b.count/ b.all;
+					if(scaleA> scaleB) return 1;
+					else if(scaleA< scaleB) return -1;
+					else return 0;
+				})
+				listExile.sort(function(a,b){
+					var scaleA= a.count/ a.all;
+					var scaleB= b.count/ b.all;
+					if(scaleA> scaleB) return 1;
+					else if(scaleA< scaleB) return -1;
+					else return 0;
+				})
+				listSkill.sort(function(a,b){
+					var scaleA= a.count/ a.all;
+					var scaleB= b.count/ b.all;
+					if(scaleA> scaleB) return 1;
+					else if(scaleA< scaleB) return -1;
+					else return 0;
+				})
+				listSurvive.sort(function(a,b){
+					var scaleA= a.count/ a.all;
+					var scaleB= b.count/ b.all;
+					if(scaleA> scaleB) return 1;
+					else if(scaleA< scaleB) return -1;
+					else return 0;
+				})
+				listWin.sort(function(a,b){
+					var scaleA= a.count/ a.all;
+					var scaleB= b.count/ b.all;
+					if(scaleA> scaleB) return 1;
+					else if(scaleA< scaleB) return -1;
+					else return 0;
+				})
+				listWolves.sort(function(a,b){
+					var scaleA= a.count/ a.all;
+					var scaleB= b.count/ b.all;
+					if(scaleA> scaleB) return 1;
+					else if(scaleA< scaleB) return -1;
+					else return 0;
+				})
+				listLucky.sort(function(a,b){
+					var scaleA= a.count/ a.all;
+					var scaleB= b.count/ b.all;
+					if(scaleA> scaleB) return 1;
+					else if(scaleA< scaleB) return -1;
+					else return 0;
+				})
+				//	console.log(listKill);
+				res.json({
+					all:listAll,
+					kill:listKill,
+					exile:listExile,
+					skill:listSkill,
+					survive:listSurvive,
+					win:listWin,
+					wolves:listWolves,
+					lucky:listLucky
+				});
+			}
+		});
+	});
 
 	// get injury information
 	app.post('/api/injury', function(req, res) {

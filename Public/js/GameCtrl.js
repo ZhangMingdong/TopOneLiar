@@ -1,14 +1,22 @@
 var mainApp = angular.module("myApp", ['ngRoute']);
 
 mainApp.controller('GameCtrl', function ($scope, $http,$window) {
-    angular.element($window).on('resize', function () { $scope.$apply() })
+    angular.element($window).on('resize', function () { $scope.$apply() });
 
+    d3.json('../data/employers-data.json', function (err, data) {
+        if (err) { throw err; }
+        $scope.employers = data;
+        $scope.$apply();
+    });
 
+    // player data of the selected game
     $scope.playerData={
         dataList:[]
     }
 
+
     $scope.gameData={
+        all:[],         // all the information
         kill:[],
         exile:[],
         skill:[],
@@ -112,6 +120,7 @@ mainApp.controller('GameCtrl', function ($scope, $http,$window) {
     $scope.$watch('selectedSeason', function() {
         $http.post('/api/death',{season:$scope.selectedSeason})
             .success(function (deathData) {
+                $scope.gameData.all=deathData.all;
                 $scope.gameData.kill=deathData.kill;
                 $scope.gameData.exile=deathData.exile;
                 $scope.gameData.skill=deathData.skill;

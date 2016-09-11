@@ -126,7 +126,7 @@
             margin: 0;
             font-family: helvetica;
             margin: auto;
-            width: 1200px;
+            width: 90%;
         }
 
         .header{
@@ -149,17 +149,7 @@
             height:100%;
         }
 
-        .scatter-container {
-            width: 50%;
-            float: left;
-            height: 400px;
-        }
 
-        .detail {
-            width: 50%;
-            float: left;
-            height: 400px;
-        }
     </style>
     <style name="line chart style">
         line-chart {
@@ -179,6 +169,73 @@
         }
 
     </style>
+    <style name="scatter plot">
+        body, html {
+        }
+        .scatter-container {
+            width: 100%;
+            float: left;
+            height: 800px;
+            margin: 0;
+            color: lime;
+            background-color: lightblue;
+            font-family: helvetica;
+            margin: auto;
+        }
+
+        .detail {
+            width: 50%;
+            float: left;
+            height: 400px;
+        }
+
+        scatter-plot {
+            width: 100%;
+            height: 100%;
+            display: block;
+            z-index: 0;
+            overflow: hidden;
+            font-size: 10px;
+        }
+
+        scatter-plot circle {
+            fill: yellow;
+            opacity: 1;
+            cursor: pointer;
+            stroke-width: 2;
+        }
+
+        scatter-plot circle:hover {
+            stroke: white;
+        }
+
+        scatter-plot text {
+            fill: black;
+            stroke: none;
+        }
+
+        scatter-plot .x-axis path, scatter-plot .y-axis path {
+            stroke: none;
+            fill: none;
+        }
+
+        scatter-plot .x-axis line, scatter-plot .y-axis line {
+            stroke: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+    <style name="game chart">
+        .game-container {
+            width: 50%;
+            float: left;
+            height: 400px;
+        }
+
+        .game-detail {
+            width: 50%;
+            float: left;
+            height: 400px;
+        }
+    </style>
     <title>Top One Liar</title>
 </head>
 <script src="../lib/d3.js"></script>
@@ -197,14 +254,16 @@
 <script src="js/gameChart.js"></script>
 <script src="js/lineChart.js"></script>
 <script src="js/barChart.js"></script>
+<script src="js/GameVis.js"></script>
+<script src="js/ScatterPlot.js"></script>
 <body  ng-app="myApp"  ng-controller="GameCtrl">
 <h1>Top One Liar</h1>
 <h2>选择赛季</h2>
 <select ng-model="selectedSeason" ng-options="season for season in seasonList" style="width:200px">
 </select>
 
+<h2>玩家信息统计</h2>
 <div>
-    <h2>玩家信息统计</h2>
     <form>
         <label><input type="radio" name="kill" ng-model="gameData.mode" value="kill">被刀概率</label>
         <label><input type="radio" name="exile" ng-model="gameData.mode" value="exile">放逐概率</label>
@@ -217,6 +276,8 @@
     <bar-chart class="quarter" data="gameData"></bar-chart>
     <line-chart class="quarter" data="playerData"></line-chart>
 </div>
+
+<h2>伤害信息</h2>
 <div class="row8">
     <h2>伤害输出</h2>
     <chord class="innerVis" data="injury"></chord>
@@ -226,8 +287,24 @@
     <chord class="innerVis" data="injured"></chord>
 </div>
 
+<h2>整体信息</h2>
 <div>
-    <h2>游戏进程</h2>
+    <div class="scatter-container">
+        <scatter-plot data="gameData.all" selected-point="selectEmployer"> </scatter-plot>
+    </div>
+    <div class="detail" ng-hide="true">
+        <div ng-show="selectEmployer">
+            <h2>{{selectEmployer.name }}</h2>
+            <h3>Employees: {{selectEmployer.value }}M</h3>
+        </div>
+        <div ng-show="!selectEmployer">
+            <h2> [hover over a company] </h2>
+        </div>
+    </div>
+</div>
+
+<h2>游戏进程</h2>
+<div>
     <div>
         <h3>选择游戏</h3>
         <select ng-model="selectedGame" ng-options="game.label for game in gamelist" style="width:200px">
@@ -236,10 +313,10 @@
     <!--
     <h1>You selected: {{selectedGame.date}}  {{selectedGame.seq}}</h1>
     -->
-    <div class="scatter-container">
+    <div class="game-container">
         <game-chart data="gameDetail" selected-point="selectedPlayer"> </game-chart>
     </div>
-    <div class="detail">
+    <div class="game-detail">
         <div ng-show="selectedPlayer">
             <h2>{{selectedPlayer.name }}</h2>
             <h3>角色: {{selectedPlayer.role }}</h3>
@@ -250,12 +327,14 @@
         </div>
     </div>
 </div>
+
+<h2>说明：</h2>
 <div style="color:red">
-    <h2>说明：</h2>
     <ul style="list-style-type:circle">
         <li>赛季选择：在此处选择赛季信息，赛季选取后，所有图标将仅显示所选赛季的数据。</li>
         <li>玩家信息统计：提供玩家在本赛季的七项数据统计。其中抓狼率是指抓到狼牌的概率，技能致死率是指除狼刀和放逐以外的出局方式发生概率。</li>
         <li>伤害信息：</li>伤害信息提供伤害输出和伤害输入两种视图。鼠标移动到一个玩家后，会隐去不相关的信息以重点显示。前者体现了伤害的输出量，后者体现了伤害的承受量。伤害的方式包括狼刀、女巫毒以及猎人开枪。
+        <li>整体信息：</li>使用散点图来体现玩家的整体信息，其中横纵坐标分别映射为获胜率和存活率，表示玩家的原点半径映射为参与游戏的数量。
         <li>游戏进程：</li>选择一局游戏之后，游戏进程将会显示这一局游戏的详细信息。
         X轴表示游戏中的时间，按照日夜分开的方式顺序排列。Y轴表示玩家的在游戏中的顺序。
         每名玩家有一条生命线，表示玩家的存活时间。
