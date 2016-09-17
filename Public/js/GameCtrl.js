@@ -260,7 +260,7 @@ mainApp.controller('GameCtrl', function ($scope, $http,$window) {
                     else if(a.deathday> b.deathday) return 1;
                     else return 0;
                 })
-                var lastBadgeDay="D1";
+                var lastBadgeDay="N1";
 
                 playersWithBadge.forEach(function(d){
                 //    console.log(d.name);

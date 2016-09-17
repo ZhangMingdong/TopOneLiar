@@ -15,6 +15,8 @@ mainApp.controller('LoadingDataCtrl', function ($scope, $http,$window) {
         ,20160903
         ,20160909
         ,20160910
+        ,
+        20160916
     ];
     files.forEach(function(file){
         d3.csv("../data/"+file+".csv",function(gameReocrd) {
