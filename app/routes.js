@@ -813,6 +813,119 @@ module.exports = function(app) {
 	});
 
 
+	// get the player bar data
+	app.post('/api/playerBarData',function(req, res){
+		console.log("playerData");
+		var playerName=req.body.name;
+		var season=req.body.season;
+
+		GameRecord.find({name:playerName,season:season},function (err, games) {
+			if (err)
+				res.send(err);
+			// role,win/lose,death/live
+			var WWD=0;
+			var WWL=0;
+			var WLD=0;
+			var WLL=0;
+			var VWD=0;
+			var VWL=0;
+			var VLD=0;
+			var VLL=0;
+
+			var WD=0;
+			var WL=0;
+			var VD=0;
+			var VL=0;
+			games.forEach(function(d){
+				if(d.role=="W"){
+					if(d.dying){
+						WD++;
+						if(d.win) WWD++;
+						else WLD++;
+					}
+					else{
+						WL++;
+						if(d.win) WWL++;
+						else WLL++;
+					}
+				}
+				else{
+					if(d.dying){
+						VD++;
+						if(d.win) VWD++;
+						else VLD++;
+					}
+					else{
+						VL++;
+						if(d.win) VWL++;
+						else VLL++;
+					}
+				}
+			});
+			console.log(WWD);
+			console.log(WWL);
+			console.log(WLD);
+			console.log(WLL);
+			console.log(VWD);
+			console.log(VWL);
+			console.log(VLD);
+			console.log(VLL);
+			console.log(WD);
+			console.log(WL);
+			console.log(VD);
+			console.log(VL);
+			var result=[
+				{
+					name:"狼人生存胜率",
+					count:WWL,
+					all:WL
+				}
+				,
+				{
+					name:"狼人生存败率",
+					count:WL-WWL,
+					all:WL
+				}
+				,
+				{
+					name:"狼人死亡胜率",
+					count:WWD,
+					all:WD
+				}
+				,
+				{
+					name:"狼人死亡败率",
+					count:WD-WWD,
+					all:WD
+				}
+				,
+				{
+					name:"好人生存胜率",
+					count:VWL,
+					all:VL
+				}
+				,
+				{
+					name:"好人生存败率",
+					count:VL-VWL,
+					all:VL
+				}
+				,
+				{
+					name:"好人死亡胜率",
+					count:VWD,
+					all:VD
+				}
+				,
+				{
+					name:"好人死亡败率",
+					count:VD-VWD,
+					all:VD
+				}
+			];
+			res.json(result);
+		});
+	});
 
 
 	app.get('/loadingData', function (req, res) {

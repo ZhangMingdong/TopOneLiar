@@ -54,8 +54,10 @@ mainApp.directive('scatterPlot', function () {
             var data = scope.data;
             x.domain([0, 1]);
             y.domain([0, 1]);
-            points = points.data(data);
+            points = points.data([]);
             points.exit().remove();
+            points = points.data(data);
+
 
             var point = points.enter().append('g').attr('class', 'point');
             point.append('circle')

@@ -70,6 +70,8 @@ mainApp.directive('chord', function () {
                 // 2.bind data
                 chord.matrix(scope.data.matrix);
 
+                svgGroup=svgGroup.data([]);
+                svgGroup.exit().remove();
                 svgGroup=svgGroup.data(chord.groups);
 
                 var g = svgGroup
@@ -111,9 +113,11 @@ mainApp.directive('chord', function () {
                     })
                     .style("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
                     .text(function(d) { return scope.data.nameByIndex.get(d.index); });
-                svgGroup.exit().remove();
 
 
+                svgChord=svgChord
+                    .data([]);
+                svgChord.exit().remove();
                 svgChord=svgChord
                     .data(chord.chords);
                 svgChord
@@ -128,7 +132,6 @@ mainApp.directive('chord', function () {
                     .style("fill", function(d) { return fill(d.source.index); })
                     .attr("d", d3.svg.chord().radius(innerRadius));
 
-                svgChord.exit().remove();
 
 
             }

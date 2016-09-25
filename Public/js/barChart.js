@@ -30,9 +30,7 @@ mainApp.directive('barChart', function () {
                 .offset([-10, 0])
                 .html(function(d) {
                     return "<strong>Frequency:</strong> <span style='color:red'>" + d.count+"/"+ d.all + "</span>";
-                })
-
-
+                });
             svg.call(tip);
 
 
@@ -55,24 +53,14 @@ mainApp.directive('barChart', function () {
 
             // get the display field
             function getField(d){
-                return d.count/ d.all;
+                if(d.all==0) return 0;
+                else return d.count/ d.all;
             }
 
             function redraw(){
             //    console.log("redraw bar chart");
-                var data=scope.data;
-            //    console.log(scope.data.mode);
-                if(data.mode=="kill") data=data.kill;
-                else if(data.mode=="exile") data=data.exile;
-                else if(data.mode=="skill") data=data.skill;
-                else if(data.mode=="survive") data=data.survive;
-                else if(data.mode=="win") data=data.win;
-                else if(data.mode=="wolves") data=data.wolves;
-                else if(data.mode=="lucky") data=data.lucky;
-            //    console.log(data);
-            //    data.forEach(function(d){
-            //        console.log(d);
-            //    });
+                var data=scope.data.Data;
+
                 var width = svgWidth - margin.left - margin.right;
                 var height = svgHeight - margin.top - margin.bottom;
 
@@ -125,11 +113,8 @@ mainApp.directive('barChart', function () {
                     .on('mouseover', tip.show)
                     .on('mouseout', tip.hide)
                     .on('click',function(d){
-                        scope.data.selectPlayer(d.name);
-                    })
-
-
-
+                        scope.data.onClick(d.name);
+                    });
 
                 bars
                     .attr("x", function(d) { return x(d.name); })
@@ -139,24 +124,16 @@ mainApp.directive('barChart', function () {
                     .on('mouseover', tip.show)
                     .on('mouseout', tip.hide)
                     .on('click',function(d){
-                        scope.data.selectPlayer(d.name);
-                    })
+                        scope.data.onClick(d.name);
+                    });
+
                 bars.exit()
                     .remove();
-
-
             }
             redraw();
 
             scope.$watch('data', redraw);
-            scope.$watch('data.mode', redraw);
-            scope.$watch('data.kill', redraw);
-            scope.$watch('data.exile', redraw);
-            scope.$watch('data.survive', redraw);
-            scope.$watch('data.skill', redraw);
-            scope.$watch('data.win', redraw);
-            scope.$watch('data.wolves', redraw);
-            scope.$watch('data.lucky', redraw);
+            scope.$watch('data.Data', redraw);
 
         }
         barChart();

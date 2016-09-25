@@ -273,8 +273,9 @@
         <label><input type="radio" name="win" ng-model="gameData.mode" value="wolves">抓狼率</label>
         <label><input type="radio" name="win" ng-model="gameData.mode" value="lucky">救活率</label>
     </form>
-    <bar-chart class="quarter" data="gameData"></bar-chart>
-    <line-chart class="quarter" data="playerData"></line-chart>
+    <bar-chart class="quarter" data="barChartData"></bar-chart>
+    <bar-chart class="quarter" data="playerBar"></bar-chart>
+    <!--<line-chart class="quarter" data="playerData"></line-chart>-->
 </div>
 
 <h2>伤害信息</h2>

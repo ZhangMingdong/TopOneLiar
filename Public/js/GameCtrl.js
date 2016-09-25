@@ -14,7 +14,7 @@ mainApp.controller('GameCtrl', function ($scope, $http,$window) {
         dataList:[]
     }
 
-
+    // the statistic data of the game
     $scope.gameData={
         all:[],         // all the information
         kill:[],
@@ -24,6 +24,65 @@ mainApp.controller('GameCtrl', function ($scope, $http,$window) {
         win:[],
         mode:"kill"
     }
+
+    // data for the global bar chart
+    $scope.barChartData={
+        Data:[]
+    }
+    $scope.barChartData.onClick=function(player){
+        // data for line chart
+        $http.post('/api/playerData',{name:player,season:$scope.selectedSeason})
+            .success(function (deathDays) {
+
+                var newDeathDays=[];
+                deathDays.forEach(function(d){
+                    console.log("try to parse");
+                    console.log(d.date);
+                    var parsedDate=iso.parse(d.date)
+                    console.log(parsedDate);
+                    console.log(typeof(parsedDate));
+                    newDeathDays.push({
+                        date: parsedDate
+                        ,deathDay:d.deathDay
+                    })
+                })
+                $scope.playerData.dataList=newDeathDays
+            })
+            .error(function (err) {
+                console.log('Error: ' + err);
+            });
+
+        // data for bar chart
+        $http.post('/api/playerBarData',{name:player,season:$scope.selectedSeason})
+            .success(function (data) {
+
+                $scope.playerBar.Data=data;
+            })
+            .error(function (err) {
+                console.log('Error: ' + err);
+            });
+
+    }
+
+    // data for the selected player bar chart
+    $scope.playerBar={
+        Data:[]
+    }
+    $scope.playerBar.onClick=function(player){
+    }
+
+    // listen to the mode selection
+    $scope.$watch('gameData.mode', function() {
+        //console.log( $scope.gameData.mode);
+        if($scope.gameData.mode=="kill") $scope.barChartData.Data=$scope.gameData.kill;
+        else if($scope.gameData.mode=="exile") $scope.barChartData.Data=$scope.gameData.exile;
+        else if($scope.gameData.mode=="skill") $scope.barChartData.Data=$scope.gameData.skill;
+        else if($scope.gameData.mode=="survive") $scope.barChartData.Data=$scope.gameData.survive;
+        else if($scope.gameData.mode=="win") $scope.barChartData.Data=$scope.gameData.win;
+        else if($scope.gameData.mode=="wolves") $scope.barChartData.Data=$scope.gameData.wolves;
+        else if($scope.gameData.mode=="lucky") $scope.barChartData.Data=$scope.gameData.lucky;
+    });
+
     // two injury matrices
     $scope.injury={
 
@@ -57,29 +116,7 @@ mainApp.controller('GameCtrl', function ($scope, $http,$window) {
         $scope.$apply();
     });
     */
-    $scope.gameData.selectPlayer=function(player){
-        $http.post('/api/playerData',{name:player,season:2})
-            .success(function (deathDays) {
 
-                var newDeathDays=[];
-                deathDays.forEach(function(d){
-                    console.log("try to parse");
-                    console.log(d.date);
-                    var parsedDate=iso.parse(d.date)
-                    console.log(parsedDate);
-                    console.log(typeof(parsedDate));
-                    newDeathDays.push({
-                        date: parsedDate
-                        ,deathDay:d.deathDay
-                    })
-                })
-                $scope.playerData.dataList=newDeathDays
-            })
-            .error(function (err) {
-                console.log('Error: ' + err);
-            });
-
-    }
 
     var iso = d3.time.format.utc("%Y-%m-%dT%H:%M:%S.%LZ");
     /*
@@ -112,9 +149,9 @@ mainApp.controller('GameCtrl', function ($scope, $http,$window) {
 */
 
     // season selection
-    $scope.seasonList=[1,2];
+    $scope.seasonList=[1,2,3];
     // selected Season
-    $scope.selectedSeason=2;
+    $scope.selectedSeason=3;
     // gameData: the calculations of players
 
     $scope.$watch('selectedSeason', function() {
@@ -128,6 +165,8 @@ mainApp.controller('GameCtrl', function ($scope, $http,$window) {
                 $scope.gameData.win=deathData.win;
                 $scope.gameData.wolves=deathData.wolves;
                 $scope.gameData.lucky=deathData.lucky;
+                $scope.gameData.mode="kill";
+                $scope.barChartData.Data=deathData.kill;
             })
             .error(function (err) {
                 console.log('Error: ' + err);
