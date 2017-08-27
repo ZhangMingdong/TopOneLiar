@@ -16,4 +16,5 @@ module.exports = mongoose.model('GameRecord', {
     ,see:Number
     ,badge: String
     ,season: Number
+    ,extra_score:Number
 });

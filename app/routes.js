@@ -5,7 +5,33 @@ var GameRecord = require('./models/GameRecord');
 //Assistant = require('./RoutesAssistant');
 
 module.exports = function(app) {
+	/*
+    GameRecord.find(function(err, records) {
+	   	console.log("自刀出局");
+        records.forEach(function(d){
+//        	if(d.lucky.length>0)
+//                console.log(d.lucky);
+//			console.log(d.lucky.substring(0,2));
+        	if(d.role=="W"&&d.dying=="K")
+			{
+                console.log(d.name+"\t"+d.date.toDateString());
+			}
+        		//console.log(records);
 
+		});
+
+        console.log("自刀被救");
+        records.forEach(function(d){
+
+            if(d.role=="W"&&d.lucky.substring(0,2)=="KR")
+            {
+                console.log(d.name+"\t"+d.date.toDateString());
+            }
+            //console.log(records);
+
+        });
+    });
+	 */
 
 	// get the game list
 	app.get('/api/gamelist', function(req, res) {
@@ -52,6 +78,7 @@ module.exports = function(app) {
 			else {
 				// collect the killed information
 				// killed of the player
+                var score={};
 				var kill={};
 				var exile={};
 				var skill={};
@@ -61,6 +88,7 @@ module.exports = function(app) {
 				var lucky={};
 				// all the record of the player
 				var all={}
+                var listScore=[];
 				var listKill=[];
 				var listExile=[];
 				var listSkill=[];
@@ -71,6 +99,20 @@ module.exports = function(app) {
 
 
 				records.forEach(function(d){
+					// calculate score
+					if(score[d.name]==undefined)score[d.name]=0;
+					if(d.win){
+						if(d.role=="W") score[d.name]+=3;
+						else if(d.role=="V") score[d.name]+=1;
+						else score[d.name]+=2;
+					}
+					else{
+                        if(d.role=="W") score[d.name]-=3;
+                        else if(d.role=="V") score[d.name]-=1;
+                        else score[d.name]-=2;
+					}
+					if(score.extra_score!=undefined) score[d.name]+=score.extra_score;
+
 					// win
 					if(d.win&& d.win==1){
 						if(win[d.name]) win[d.name]++;
@@ -117,6 +159,10 @@ module.exports = function(app) {
 					// lucky
 				});
 				// write the information to array;
+                for(var player in score){
+                	listScore.push({name:player,count:score[player]});
+
+                }
 				for(var player in kill){
 					if(all[player]>1)
 						listKill.push({name:player,count:kill[player]/all[player]});
@@ -180,7 +226,9 @@ module.exports = function(app) {
 					else if(a.count< b.count) return -1;
 					else return 0;
 				})
+				console.log(listScore);
 				res.json({
+					score:listScore,
 					kill:listKill,
 					exile:listExile,
 					skill:listSkill,
@@ -490,6 +538,7 @@ module.exports = function(app) {
 				// all the record of the player
 				var all={}
 				var listAll=[]
+				var listScore=[];
 				var listKill=[];
 				var listExile=[];
 				var listSkill=[];
@@ -500,11 +549,12 @@ module.exports = function(app) {
 
 
 				records.forEach(function(d){
-					// all: check if this player exist
+                    // all: check if this player exist
 					if(all[d.name]) all[d.name].count++;
 					else all[d.name]={
 						name: d.name
 						,count:1
+						,score:50
 						,kill:0
 						,exile:0
 						,skill:0
@@ -514,8 +564,30 @@ module.exports = function(app) {
 						,lucky:0
 					}
 
+
+
 					// win
-					if(d.win&& d.win==1) all[d.name].win++;
+					var scoreIncrement=0;
+					if(d.win&& d.win==1){
+                        all[d.name].win++;
+
+                        if(d.role=="W") scoreIncrement+=3;
+                        else if(d.role=="V") scoreIncrement+=1;
+                        else scoreIncrement+=2;
+					}
+					else{
+                        if(d.role=="W") scoreIncrement-=3;
+                        else if(d.role=="V") scoreIncrement-=1;
+                        else scoreIncrement-=2;
+					}
+					if(d.name=="郑轩") console.log("\t"+scoreIncrement);
+                    all[d.name].score+=scoreIncrement;
+
+                    if(d.extra_score){
+					//	console.log("extra score:"+d.extra_score);
+                        all[d.name].score+=d.extra_score;
+					}
+
 					// kill
 					var killed=0
 					var dyings= d.dying.split(";");
@@ -552,6 +624,9 @@ module.exports = function(app) {
 				for(var player in all){
 					// the list of all ignore the threshold
 					listAll.push(all[player]);
+					// scores
+                    listScore.push({name:player,count:all[player].score,all:100});
+
 					if(all[player].count>threshold){
 						if(all[player].kill>1)
 							listKill.push({name:player,count:all[player].kill,all:all[player].count});
@@ -570,6 +645,18 @@ module.exports = function(app) {
 					}
 				}
 
+                console.log("scores:");
+                listScore.forEach(function(d){
+                	console.log(d.name+": "+d.count);
+				})
+
+                listScore.sort(function(a,b){
+                    var scaleA= a.count/ a.all;
+                    var scaleB= b.count/ b.all;
+                    if(scaleA> scaleB) return 1;
+                    else if(scaleA< scaleB) return -1;
+                    else return 0;
+                })
 				listKill.sort(function(a,b){
 					var scaleA= a.count/ a.all;
 					var scaleB= b.count/ b.all;
@@ -619,9 +706,10 @@ module.exports = function(app) {
 					else if(scaleA< scaleB) return -1;
 					else return 0;
 				})
-				//	console.log(listKill);
+
 				res.json({
 					all:listAll,
+					score:listScore,
 					kill:listKill,
 					exile:listExile,
 					skill:listSkill,
@@ -755,9 +843,11 @@ module.exports = function(app) {
 
 	// write game record data into database;
 	app.post('/api/gameRecord', function(req, res) {
-	//	req.body.forEach(function(d){
-	//		console.log(d);
-	//	})
+		/*
+		req.body.forEach(function(d){
+			console.log(d);
+		})
+		*/
 		GameRecord.create(req.body, function(err, gameRecords) {
 			if (err)
 				res.send(err);
@@ -767,6 +857,7 @@ module.exports = function(app) {
 				res.json("Succeed");
 			}
 		});
+		console.log("new data, length: "+req.body.length);
 
 	});
 

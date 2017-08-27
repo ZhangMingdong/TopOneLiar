@@ -17,6 +17,7 @@ mainApp.controller('GameCtrl', function ($scope, $http,$window) {
     // the statistic data of the game
     $scope.gameData={
         all:[],         // all the information
+        score:[],
         kill:[],
         exile:[],
         skill:[],
@@ -73,8 +74,10 @@ mainApp.controller('GameCtrl', function ($scope, $http,$window) {
 
     // listen to the mode selection
     $scope.$watch('gameData.mode', function() {
-        //console.log( $scope.gameData.mode);
-        if($scope.gameData.mode=="kill") $scope.barChartData.Data=$scope.gameData.kill;
+        console.log( $scope.gameData.mode);
+        console.log($scope.gameData.score);
+        if($scope.gameData.mode=="score") $scope.barChartData.Data=$scope.gameData.score;
+        else if($scope.gameData.mode=="kill") $scope.barChartData.Data=$scope.gameData.kill;
         else if($scope.gameData.mode=="exile") $scope.barChartData.Data=$scope.gameData.exile;
         else if($scope.gameData.mode=="skill") $scope.barChartData.Data=$scope.gameData.skill;
         else if($scope.gameData.mode=="survive") $scope.barChartData.Data=$scope.gameData.survive;
@@ -149,15 +152,17 @@ mainApp.controller('GameCtrl', function ($scope, $http,$window) {
 */
 
     // season selection
-    $scope.seasonList=[1,2,3];
+    $scope.seasonList=[1,2,3,4];
     // selected Season
-    $scope.selectedSeason=3;
+    $scope.selectedSeason=4;
     // gameData: the calculations of players
 
     $scope.$watch('selectedSeason', function() {
         $http.post('/api/death',{season:$scope.selectedSeason})
             .success(function (deathData) {
+                console.log("get death info:" + deathData.score);
                 $scope.gameData.all=deathData.all;
+                $scope.gameData.score=deathData.score;
                 $scope.gameData.kill=deathData.kill;
                 $scope.gameData.exile=deathData.exile;
                 $scope.gameData.skill=deathData.skill;

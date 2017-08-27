@@ -3,6 +3,7 @@ var mainApp = angular.module("myApp", ['ngRoute']);
 mainApp.controller('LoadingDataCtrl', function ($scope, $http,$window) {
 
     var files=[
+    //*
         1,
         20160729,
         20160730,
@@ -25,12 +26,27 @@ mainApp.controller('LoadingDataCtrl', function ($scope, $http,$window) {
         20161001
         ,
         20161003
+        ,
+        20161004
+        ,
+        20161005
+        ,
+        20161014
+        ,
+        20170825
+        ,
+        //*/
+        20170826
+
     ];
     files.forEach(function(file){
         d3.csv("../data/"+file+".csv",function(gameReocrd) {
-            //    gameReocrd.forEach(function(d){
-            //        console.log(d);
-            //    });
+        //    gameReocrd.forEach(function(d){
+        //        console.log(d);
+        //    });
+
+
+
             console.log("=================================================")
             $http.post('/api/gameRecord',gameReocrd)
                 .success(function (result) {
