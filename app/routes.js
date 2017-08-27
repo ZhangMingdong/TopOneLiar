@@ -580,7 +580,7 @@ module.exports = function(app) {
                         else if(d.role=="V") scoreIncrement-=1;
                         else scoreIncrement-=2;
 					}
-					if(d.name=="郑轩") console.log("\t"+scoreIncrement);
+					if(d.name=="张明岽") console.log("\t"+scoreIncrement);
                     all[d.name].score+=scoreIncrement;
 
                     if(d.extra_score){
@@ -625,7 +625,7 @@ module.exports = function(app) {
 					// the list of all ignore the threshold
 					listAll.push(all[player]);
 					// scores
-                    listScore.push({name:player,count:all[player].score,all:100});
+                    listScore.push({name:player,count:all[player].score});
 
 					if(all[player].count>threshold){
 						if(all[player].kill>1)
@@ -651,8 +651,8 @@ module.exports = function(app) {
 				})
 
                 listScore.sort(function(a,b){
-                    var scaleA= a.count/ a.all;
-                    var scaleB= b.count/ b.all;
+                    var scaleA= a.count;
+                    var scaleB= b.count;
                     if(scaleA> scaleB) return 1;
                     else if(scaleA< scaleB) return -1;
                     else return 0;
@@ -909,113 +909,229 @@ module.exports = function(app) {
 		console.log("playerData");
 		var playerName=req.body.name;
 		var season=req.body.season;
+		var mode = req.body.mode;
+		if(mode=="score")
+            GameRecord.find({name:playerName,season:season},function (err, games) {
+                if (err)
+                    res.send(err);
+                // role,win/lose,death/live
+                var WW=0;
+                var WL=0;
+                var VW=0;
+                var VL=0;
+                var GW=0;
+                var GL=0;
+                var S2=0;
+                var S_1=0;
+                var S_3=0;
+                var S_4=0;
+                var S_5=0;
 
-		GameRecord.find({name:playerName,season:season},function (err, games) {
-			if (err)
-				res.send(err);
-			// role,win/lose,death/live
-			var WWD=0;
-			var WWL=0;
-			var WLD=0;
-			var WLL=0;
-			var VWD=0;
-			var VWL=0;
-			var VLD=0;
-			var VLL=0;
 
-			var WD=0;
-			var WL=0;
-			var VD=0;
-			var VL=0;
-			games.forEach(function(d){
-				if(d.role=="W"){
-					if(d.dying){
-						WD++;
-						if(d.win) WWD++;
-						else WLD++;
+                games.forEach(function(d){
+                    if(d.role=="W"){
+                        if(d.win) WW++;
+                        else WL++;
+                    }
+                    else if(d.role=="V"){
+                        if(d.win) VW++;
+                        else VL++;
+                    }
+                    else{
+                        if(d.win) GW++;
+                        else GL++;
+                    }
+
+                    if(d.extra_score){
+                    	if(d.extra_score==2)
+                    		S2++;
+                    	else if (d.extra_score==-1)
+                        	S_1++;
+                        else if (d.extra_score==-3)
+                            S_3++;
+                        else if (d.extra_score==-4)
+                            S_4++;
+                        else if (d.extra_score==-5)
+                            S_5++;
 					}
-					else{
-						WL++;
-						if(d.win) WWL++;
-						else WLL++;
-					}
-				}
-				else{
-					if(d.dying){
-						VD++;
-						if(d.win) VWD++;
-						else VLD++;
-					}
-					else{
-						VL++;
-						if(d.win) VWL++;
-						else VLL++;
-					}
-				}
-			});
-			console.log(WWD);
-			console.log(WWL);
-			console.log(WLD);
-			console.log(WLL);
-			console.log(VWD);
-			console.log(VWL);
-			console.log(VLD);
-			console.log(VLL);
-			console.log(WD);
-			console.log(WL);
-			console.log(VD);
-			console.log(VL);
-			var result=[
-				{
-					name:"狼人生存胜率",
-					count:WWL,
-					all:WL
-				}
-				,
-				{
-					name:"狼人生存败率",
-					count:WL-WWL,
-					all:WL
-				}
-				,
-				{
-					name:"狼人死亡胜率",
-					count:WWD,
-					all:WD
-				}
-				,
-				{
-					name:"狼人死亡败率",
-					count:WD-WWD,
-					all:WD
-				}
-				,
-				{
-					name:"好人生存胜率",
-					count:VWL,
-					all:VL
-				}
-				,
-				{
-					name:"好人生存败率",
-					count:VL-VWL,
-					all:VL
-				}
-				,
-				{
-					name:"好人死亡胜率",
-					count:VWD,
-					all:VD
-				}
-				,
-				{
-					name:"好人死亡败率",
-					count:VD-VWD,
-					all:VD
-				}
-			];
-			res.json(result);
-		});
+                });
+                console.log(WW);
+                console.log(WL);
+                console.log(VW);
+                console.log(VL);
+                console.log(GW);
+                console.log(GL);
+                console.log(S2);
+                console.log(S_1);
+                console.log(S_3);
+                console.log(S_4);
+                console.log(S_5);
+                var result=[
+                    {
+                        name:"狼人获胜次数",
+                        count:WW
+                    }
+                    ,
+                    {
+                        name:"狼人失败次数",
+                        count:WL
+                    }
+                    ,
+                    {
+                        name:"平民获胜次数",
+                        count:VW
+                    }
+                    ,
+                    {
+                        name:"平民失败次数",
+                        count:VL
+                    }
+                    ,
+                    {
+                        name:"神民获胜次数",
+                        count:GW
+                    }
+                    ,
+                    {
+                        name:"神民失败次数",
+                        count:GL
+                    }
+                    ,
+                    {
+                        name:"毒杀\枪杀狼人次数",
+                        count:S2
+                    }
+                    ,
+                    {
+                        name:"毒杀\枪杀平民次数",
+                        count:S_1
+                    }
+                    ,
+                    {
+                        name:"毒杀\枪杀白痴次数",
+                        count:S_3
+                    }
+                    ,
+                    {
+                        name:"毒杀\枪杀女巫\猎人次数",
+                        count:S_4
+                    }
+                    ,
+                    {
+                        name:"毒杀\枪杀预言家次数",
+                        count:S_5
+                    }
+                ];
+                res.json(result);
+            });
+		else
+            GameRecord.find({name:playerName,season:season},function (err, games) {
+                if (err)
+                    res.send(err);
+                // role,win/lose,death/live
+                var WWD=0;
+                var WWL=0;
+                var WLD=0;
+                var WLL=0;
+                var VWD=0;
+                var VWL=0;
+                var VLD=0;
+                var VLL=0;
+
+                var WD=0;
+                var WL=0;
+                var VD=0;
+                var VL=0;
+                games.forEach(function(d){
+                    if(d.role=="W"){
+                        if(d.dying){
+                            WD++;
+                            if(d.win) WWD++;
+                            else WLD++;
+                        }
+                        else{
+                            WL++;
+                            if(d.win) WWL++;
+                            else WLL++;
+                        }
+                    }
+                    else{
+                        if(d.dying){
+                            VD++;
+                            if(d.win) VWD++;
+                            else VLD++;
+                        }
+                        else{
+                            VL++;
+                            if(d.win) VWL++;
+                            else VLL++;
+                        }
+                    }
+                });
+                console.log(WWD);
+                console.log(WWL);
+                console.log(WLD);
+                console.log(WLL);
+                console.log(VWD);
+                console.log(VWL);
+                console.log(VLD);
+                console.log(VLL);
+                console.log(WD);
+                console.log(WL);
+                console.log(VD);
+                console.log(VL);
+                var result=[
+                    {
+                        name:"狼人生存胜率",
+                        count:WWL,
+                        all:WL
+                    }
+                    ,
+                    {
+                        name:"狼人生存败率",
+                        count:WL-WWL,
+                        all:WL
+                    }
+                    ,
+                    {
+                        name:"狼人死亡胜率",
+                        count:WWD,
+                        all:WD
+                    }
+                    ,
+                    {
+                        name:"狼人死亡败率",
+                        count:WD-WWD,
+                        all:WD
+                    }
+                    ,
+                    {
+                        name:"好人生存胜率",
+                        count:VWL,
+                        all:VL
+                    }
+                    ,
+                    {
+                        name:"好人生存败率",
+                        count:VL-VWL,
+                        all:VL
+                    }
+                    ,
+                    {
+                        name:"好人死亡胜率",
+                        count:VWD,
+                        all:VD
+                    }
+                    ,
+                    {
+                        name:"好人死亡败率",
+                        count:VD-VWD,
+                        all:VD
+                    }
+                ];
+                res.json(result);
+            });
+
 	});
 
 

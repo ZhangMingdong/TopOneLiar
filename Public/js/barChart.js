@@ -29,7 +29,10 @@ mainApp.directive('barChart', function () {
                 .attr('class', 'd3-tip')
                 .offset([-10, 0])
                 .html(function(d) {
-                    return "<strong>Frequency:</strong> <span style='color:red'>" + d.count+"/"+ d.all + "</span>";
+                    if(d.all==undefined)
+                        return "<strong>Score:</strong> <span style='color:red'>" + d.count+"</span>";
+                    else
+                        return "<strong>Frequency:</strong> <span style='color:red'>" + d.count+"/"+ d.all + "</span>";
                 });
             svg.call(tip);
 
@@ -53,7 +56,7 @@ mainApp.directive('barChart', function () {
 
             // get the display field
             function getField(d){
-                if(d.all==0) return 0;
+                if(d.all==undefined) return d.count;
                 else return d.count/ d.all;
             }
 
@@ -101,7 +104,7 @@ mainApp.directive('barChart', function () {
                     .attr("y", 6)
                     .attr("dy", ".71em")
                     .style("text-anchor", "end")
-                    .text("Value ($)");
+                    .text("");
                 bars=bars.data(data);
                 bars
                     .enter().append("rect")

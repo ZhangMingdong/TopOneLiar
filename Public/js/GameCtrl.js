@@ -54,9 +54,8 @@ mainApp.controller('GameCtrl', function ($scope, $http,$window) {
             });
 
         // data for bar chart
-        $http.post('/api/playerBarData',{name:player,season:$scope.selectedSeason})
+        $http.post('/api/playerBarData',{name:player,season:$scope.selectedSeason,mode:$scope.gameData.mode})
             .success(function (data) {
-
                 $scope.playerBar.Data=data;
             })
             .error(function (err) {
