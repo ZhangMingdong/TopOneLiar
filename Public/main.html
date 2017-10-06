@@ -236,7 +236,7 @@
             height: 400px;
         }
     </style>
-    <title>Top One Liar</title>
+    <title>神之眼狼人杀技术统计</title>
 </head>
 <script src="../lib/d3.js"></script>
 <script src="../lib/d3.tip.v0.6.3.js"></script>
@@ -257,7 +257,7 @@
 <script src="js/GameVis.js"></script>
 <script src="js/ScatterPlot.js"></script>
 <body  ng-app="myApp"  ng-controller="GameCtrl">
-<h1>Top One Liar</h1>
+<h1>神之眼狼人杀技术统计</h1>
 <h2>选择赛季</h2>
 <select ng-model="selectedSeason" ng-options="season for season in seasonList" style="width:200px">
 </select>
@@ -273,6 +273,7 @@
         <label><input type="radio" name="win" ng-model="gameData.mode" value="win">获胜率</label>
         <label><input type="radio" name="win" ng-model="gameData.mode" value="wolves">抓狼率</label>
         <label><input type="radio" name="win" ng-model="gameData.mode" value="lucky">救活率</label>
+        <label><input type="radio" name="win" ng-model="gameData.mode" value="foolish">脑残指数</label>
     </form>
     <bar-chart class="quarter" data="barChartData"></bar-chart>
     <bar-chart class="quarter" data="playerBar"></bar-chart>

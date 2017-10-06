@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 module.exports = mongoose.model('GameRecord', {
     date:Date
     ,game: Number
+    ,seat: Number
     ,name: String
     ,role: String
     ,lover: Number
@@ -17,4 +18,5 @@ module.exports = mongoose.model('GameRecord', {
     ,badge: String
     ,season: Number
     ,extra_score:Number
+    ,following:Number
 });

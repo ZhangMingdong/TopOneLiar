@@ -1,3 +1,6 @@
+/*
+    chart to show one game
+ */
 mainApp.directive('gameChart', function () {
     function link(scope, el, attr) {
         el = el[0];
@@ -9,6 +12,7 @@ mainApp.directive('gameChart', function () {
         var badge = svg.selectAll("badge");
         var lovers = svg.selectAll("lovers");
         var points = svg.selectAll('point');
+        var results = svg.selectAll('result');
         var lucky = svg.selectAll('lucky');
         var xScale = d3.scale.ordinal();
         var yScale = d3.scale.ordinal();
@@ -101,7 +105,6 @@ mainApp.directive('gameChart', function () {
 
 
             // bar
-
             lifeline=lifeline.data(data);
             lifeline
                 .enter().append("rect")
@@ -130,6 +133,9 @@ mainApp.directive('gameChart', function () {
                     else if(d.role=="H") return "blue";
                     else if(d.role=="S") return "orange";
                     else if(d.role=="I") return "purple";
+                    else if(d.role=="G") return "olive";
+                    else if(d.role=="N") return "maroon";
+                    else if(d.role=="F") return "lightblue";
                     else return "black";
                 })
                 .attr("opacity",0.6);
@@ -248,7 +254,7 @@ mainApp.directive('gameChart', function () {
                 .attr('class', 'lucky')
                 .attr("fill","red")
                 .attr('transform', function (d) {
-                    return 'translate(' + [xScale(d.day), yScale(d.name)] + ')';
+                    return 'translate(' + [xScale(xScale), yScale(d.name)] + ')';
                 });
             lucky
                 .attr('transform', function (d) {
@@ -257,6 +263,36 @@ mainApp.directive('gameChart', function () {
             lucky.exit().remove();
 
 
+            // win or lose
+            results = results.data(data);
+            results.exit().remove();
+            results.enter().append('circle').attr('r', 6)
+                .attr('class', 'point')
+                .attr("fill-opacity",0)
+                .attr("stroke-opacity",function(d){
+                    if(d.win==1) return 1;
+                    else return 0;
+                })
+                .attr("stroke",function(d){
+                    if(d.win==1) return "gold";
+                    else return "gray";
+                })
+                .attr('transform', function (d, i) {
+                    return 'translate(' + [xScale("S"), yScale(d.name)] + ')';
+                })
+            results
+                .attr("fill-opacity",0)
+                .attr("stroke",function(d){
+                    if(d.win==1) return "gold";
+                    else return "gray";
+                })
+                .attr("stroke-opacity",function(d){
+                    if(d.win==1) return 1;
+                    else return 0;
+                })
+                .attr('transform', function (d, i) {
+                    return 'translate(' + [xScale("S"), yScale(d.name)] + ')';
+                })
 
             xAxisG.call(xAxis);
             yAxisG.call(yAxis);

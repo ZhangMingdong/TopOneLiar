@@ -3,12 +3,6 @@ var mainApp = angular.module("myApp", ['ngRoute']);
 mainApp.controller('GameCtrl', function ($scope, $http,$window) {
     angular.element($window).on('resize', function () { $scope.$apply() });
 
-    d3.json('../data/employers-data.json', function (err, data) {
-        if (err) { throw err; }
-        $scope.employers = data;
-        $scope.$apply();
-    });
-
     // player data of the selected game
     $scope.playerData={
         dataList:[]
@@ -23,7 +17,7 @@ mainApp.controller('GameCtrl', function ($scope, $http,$window) {
         skill:[],
         survive:[],
         win:[],
-        mode:"kill"
+        mode:"score"
     }
 
     // data for the global bar chart
@@ -83,6 +77,7 @@ mainApp.controller('GameCtrl', function ($scope, $http,$window) {
         else if($scope.gameData.mode=="win") $scope.barChartData.Data=$scope.gameData.win;
         else if($scope.gameData.mode=="wolves") $scope.barChartData.Data=$scope.gameData.wolves;
         else if($scope.gameData.mode=="lucky") $scope.barChartData.Data=$scope.gameData.lucky;
+        else if($scope.gameData.mode=="foolish") $scope.barChartData.Data=$scope.gameData.foolish;
     });
 
     // two injury matrices
@@ -151,9 +146,9 @@ mainApp.controller('GameCtrl', function ($scope, $http,$window) {
 */
 
     // season selection
-    $scope.seasonList=[1,2,3,4];
+    $scope.seasonList=[1];
     // selected Season
-    $scope.selectedSeason=4;
+    $scope.selectedSeason=1;
     // gameData: the calculations of players
 
     $scope.$watch('selectedSeason', function() {
@@ -169,8 +164,9 @@ mainApp.controller('GameCtrl', function ($scope, $http,$window) {
                 $scope.gameData.win=deathData.win;
                 $scope.gameData.wolves=deathData.wolves;
                 $scope.gameData.lucky=deathData.lucky;
-                $scope.gameData.mode="kill";
-                $scope.barChartData.Data=deathData.kill;
+                $scope.gameData.foolish=deathData.foolish;
+                $scope.gameData.mode="score";
+                $scope.barChartData.Data=deathData.score;
             })
             .error(function (err) {
                 console.log('Error: ' + err);
@@ -279,7 +275,9 @@ mainApp.controller('GameCtrl', function ($scope, $http,$window) {
                     gameDetail.push({name: d.name
                         ,role: d.role
                         ,dying: d.dying
-                        ,day: deathTime});
+                        ,day: deathTime
+                        ,win:d.win
+                    });
 
                     // lovers
                     if(d.lover==1) enchantedPlayers.push({seq:i,name: d.name,day:deathTime});
