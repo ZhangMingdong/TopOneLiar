@@ -152,7 +152,7 @@ mainApp.controller('GameCtrl', function ($scope, $http,$window) {
     // gameData: the calculations of players
 
     $scope.$watch('selectedSeason', function() {
-        $http.post('/api/death',{season:$scope.selectedSeason})
+        $http.post('/api/playersInfo',{season:$scope.selectedSeason})
             .success(function (deathData) {
                 console.log("get death info:" + deathData.score);
                 $scope.gameData.all=deathData.all;

@@ -8,6 +8,8 @@ mainApp.controller('LoadingDataCtrl', function ($scope, $http,$window) {
         20171003
         ,
         20171005
+        ,
+        20171006
     ];
     files.forEach(function(file){
         console.log("loading data")

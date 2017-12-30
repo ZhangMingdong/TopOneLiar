@@ -5,155 +5,22 @@ var GameRecord = require('./models/GameRecord');
 //Assistant = require('./RoutesAssistant');
 
 module.exports = function(app) {
+
+	// check whether a player is wolf
+	function IsWolf(d){
+		return d.role=="W"	// wolf
+			||d.role=="WW"	// white wolf
+			||d.role=="WB"	// wolf beauty
+	}
+
+
 	/*
-    GameRecord.find(function(err, records) {
-	   	console.log("自刀出局");
-        records.forEach(function(d){
-//        	if(d.lucky.length>0)
-//                console.log(d.lucky);
-//			console.log(d.lucky.substring(0,2));
-        	if(d.role=="W"&&d.dying=="K")
-			{
-                console.log(d.name+"\t"+d.date.toDateString());
-			}
-        		//console.log(records);
-
-		});
-
-        console.log("自刀被救");
-        records.forEach(function(d){
-
-            if(d.role=="W"&&d.lucky.substring(0,2)=="KR")
-            {
-                console.log(d.name+"\t"+d.date.toDateString());
-            }
-            //console.log(records);
-
-        });
-    });
-	 */
-
-	// get the game list
-	app.get('/api/gamelist', function(req, res) {
-		GameRecord.find(function(err, records) {
-
-		//	records.forEach(function(d){
-		//		console.log(d);
-		//	})
-			if (err)
-				console.log(err);
-			else {
-				records.sort(function(a,b){
-					if(a.date< b.date) return -1;
-					else if(a.date> b.date) return 1;
-					else if (a.game< b.game) return -1;
-					else if (a.game > b.game) return 1;
-					else return 0;
-				});
-				var games=[];
-				var lastSeq;
-				records.forEach(function(d){
-					if(d.game!=lastSeq){
-						games.push({
-							date: d.date
-							,seq: d.game
-							,label: d.date.toLocaleDateString()+"---"+ d.game
-						});
-						lastSeq= d.game;
-					}
-				});
-			//	games.forEach(function(d){
-			//		console.log(d);
-			//	})
-				res.json(games);
-			}
-		});
-	});
-
-	// get injury information
-	app.get('/api/injury', function(req, res) {
-		GameRecord.find(function(err, records) {
-			if (err)
-				console.log(err);
-			var injury=[];
-			records.sort(function(a,b){
-				if(a.date< b.date) return -1;
-				else if(a.date> b.date) return 1;
-				else if (a.game< b.game) return -1;
-				else if (a.game > b.game) return 1;
-				else return 0;
-			});
-			var currentGame=records[0].game;
-			var hunter="";
-			var witch="";
-			var wolves=[];
-			var killed=[];
-			var hunted="";
-			var poisoned="";
-			records.forEach(function(d){
-				if(d.game!=currentGame){
-					// record injury and start a new game
-					if(hunter!=""&&hunted!="") injury.push({from:hunter,to:hunted});
-					if(witch!=""&&poisoned!="") injury.push({from:witch,to:poisoned});
-					wolves.forEach(function(w){
-						killed.forEach(function(k){
-							injury.push({from:w,to:k});
-						})
-					})
-
-					currentGame= d.game;
-					hunter="";
-					witch="";
-					wolves=[];
-					killed=[];
-					hunted="";
-					poisoned="";
-				}
-				// record data of this game
-				if(d.dying=="P") poisoned= d.name;
-				else if(d.dying=="H") poisoned = d.name;
-				else if(d.dying=="K") killed.push(d.name);
-				if(d.role=="H") hunter= d.name;
-				else if(d.role=="Witch") witch= d.name;
-				else if(d.role=="W") wolves.push(d.name);
-			});
-			// formate the injury data
-			var matrix=[];
-			var players=[];
-			var indexByName={};
-			var index=0;
-			// build the player list and the index map
-			injury.forEach(function(d){
-				if(indexByName[d.from]==undefined){
-					players.push(d.from);
-					indexByName[d.from]=index++;
-				}
-				if(indexByName[d.to]==undefined){
-					players.push(d.to);
-					indexByName[d.to]=index++;
-				}
-			});
-			// build the matrix;
-			// init the matrix
-			for (var j = -1; ++j < index;){
-				var row = matrix[j] = [];
-				for (var i = -1; ++i < index;) row[i] = 0;
-			}
-			injury.forEach(function(d){
-				matrix[indexByName[d.from]][indexByName[d.to]]++;
-			});
-		//	console.log(players);
-		//	console.log(matrix);
-			res.json({matrix:matrix
-				,indexByName:indexByName
-				,players:players})
-		});
-	});
-
-	// get the game list
+		 get the game list
+		 for the game choosing drop down list
+	*/
 	app.post('/api/gamelist', function(req, res) {
 		var season=req.body.season;
-	//	console.log(season);
+		console.log(season);
 		GameRecord.find({season:season},function(err, records) {
 
 			//	records.forEach(function(d){
@@ -189,8 +56,11 @@ module.exports = function(app) {
 		});
 	});
 
-	// get the data of death
-	app.post('/api/death', function(req, res) {
+	/*
+		get the players information of the season
+		use for players barchart and scatterplot
+	 */
+	app.post('/api/playersInfo', function(req, res) {
 		var season=req.body.season;
 		//	console.log(season);
 		GameRecord.find({season:season},function(err, records) {
@@ -210,9 +80,9 @@ module.exports = function(app) {
 				var listLucky=[];
                 var listFoolish=[];
 
-
+				// 1.handle every record
 				records.forEach(function(d){
-                    // all: check if this player exist
+                    // 0.all: check if this player exist
 					if(all[d.name]) all[d.name].count++;
 					else all[d.name]={
 						name: d.name
@@ -230,21 +100,21 @@ module.exports = function(app) {
 
 
 
-					// win
+					// 1.win
 					var scoreIncrement=0;
 					if(d.win&& d.win==1){
                         all[d.name].win++;
 
-                        if(d.role=="W") scoreIncrement+=3;
+                        if(IsWolf(d)) scoreIncrement+=3;
                         else if(d.role=="V") scoreIncrement+=1;
                         else scoreIncrement+=2;
 					}
 					else{
-                        if(d.role=="W") scoreIncrement-=3;
+                        if(IsWolf(d)) scoreIncrement-=3;
                         else if(d.role=="V") scoreIncrement-=1;
                         else scoreIncrement-=2;
 					}
-					if(d.name=="张明岽") console.log("\t"+scoreIncrement);
+
                     all[d.name].score+=scoreIncrement;
 
                     if(d.extra_score){
@@ -276,7 +146,7 @@ module.exports = function(app) {
 						}
 					}
 					// wolves
-					if(d.role=="W"|| d.role=="WW")
+					if(IsWolf(d))
 						all[d.name].wolves++;
 
 					if(d.lucky){
@@ -404,7 +274,10 @@ module.exports = function(app) {
 		});
 	});
 
-	// get injury information
+	/*
+		get injury information
+		for the chord diagram of the injury matrix
+	 */
 	app.post('/api/injury', function(req, res) {
 		var season=req.body.season;
 	//	console.log("injury post"+season);
@@ -469,7 +342,7 @@ module.exports = function(app) {
 					else if(d.dying=="K") killed.push(d.name);
 					if(d.role=="H") hunter= d.name;
 					else if(d.role=="Witch") witch= d.name;
-					else if(d.role=="W"||d.role=="WW") wolves.push(d.name);
+					else if(IsWolf(d)) wolves.push(d.name);
 				});
 				// record injury and start a new game
 				if(hunter!=""&&hunted!=""){
@@ -523,7 +396,10 @@ module.exports = function(app) {
 	});
 
 
-	// write game record data into database;
+	/*
+	 	write game record data into database
+	 	for loading data
+	 */
 	app.post('/api/gameRecord', function(req, res) {
 
 		req.body.forEach(function(d){
@@ -543,7 +419,10 @@ module.exports = function(app) {
 
 	});
 
-	// get the data of one game by date and sequence
+	/*
+		get the data of one game by date and sequence
+		for the game chart
+	 */
 	app.post('/api/oneGame',function(req, res){
 		var date=req.body.date;
 		var seq=req.body.seq;
@@ -562,38 +441,12 @@ module.exports = function(app) {
 		});
 	});
 
-	// get the player data
-	app.post('/api/playerData',function(req, res){
-		console.log("playerData");
-		var playerName=req.body.name;
-		var season=req.body.season;
-
-		GameRecord.find({name:playerName,season:season},function (err, games) {
-			if (err)
-				res.send(err);
-			var deathDays=[];
-			var lastDate;
-			var lastAlteredDate;
-		//	console.log(games.length);
-			games.forEach(function(d){
-		//		console.log(d.date);
-				var deathDay= d.deathday?d.deathday:12;
-				var date= d.date;
-				if(lastDate && date.getDate()==lastDate.getDate()){
-					date.setHours(lastAlteredDate.getHours()+1);
-				}
-				lastDate= d.date;
-				lastAlteredDate=date;
-				deathDays.push({date: d.date,deathDay:deathDay});
-			})
-			res.json(deathDays);
-		});
-	});
-
-
-	// get the player bar data
+	/*
+	 	get the player bar data
+	 	used for the barchart of one player
+	 */
 	app.post('/api/playerBarData',function(req, res){
-		console.log("playerData");
+		// console.log("playerData");
 		var playerName=req.body.name;
 		var season=req.body.season;
 		var mode = req.body.mode;
@@ -616,7 +469,7 @@ module.exports = function(app) {
 
 
                 games.forEach(function(d){
-                    if(d.role=="W"){
+                    if(IsWolf(d)){
                         if(d.win) WW++;
                         else WL++;
                     }
@@ -730,7 +583,7 @@ module.exports = function(app) {
                 var VD=0;
                 var VL=0;
                 games.forEach(function(d){
-                    if(d.role=="W"){
+                    if(IsWolf(d)){
                         if(d.dying){
                             WD++;
                             if(d.win) WWD++;
